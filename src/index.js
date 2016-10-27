@@ -8,11 +8,15 @@
 
 import throng from 'throng';
 
+const work = () => {
+  console.log('Working...');
+};
+
 /**
  * Master function
  */
 const master = () => {
-  console.log('Master function, concurrency:', config.concurrency.worker);
+  console.log('Master function, concurrency:', 2);
 };
 
 /**
@@ -20,12 +24,13 @@ const master = () => {
  * @param  {Number} id Worker id
  */
 const start = (id) => {
-  setTimeout(() => console.log('working'), 15 * 1000 * 60);
+  work();
+  setInterval(work, 1000 * 60 * 5);
 };
 
 // Run Workers
 throng({
-  workers: 3,
+  workers: 2,
   grace: 1,
   master: master,
   start: start

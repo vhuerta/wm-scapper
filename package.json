@@ -20,6 +20,7 @@
   },
   "homepage": "https://github.com/vhuerta/wm-scapper#readme",
   "dependencies": {
+    "babel-cli": "^6.18.0",
     "babel-preset-node6": "^11.0.0",
     "babel-register": "^6.18.0",
     "mongodb": "^2.2.11",
