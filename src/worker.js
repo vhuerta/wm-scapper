@@ -49,7 +49,7 @@ class Worker extends EventEmitter {
       .connect(_this.mongoUri)
       .then(db => _this.db = db)
       .then(() => _this.emit('ready'))
-      .catch(err => _this.emit('error'));
+      .catch(err => _this.emit('error', err));
   }
 
   buildUtility() {
@@ -79,7 +79,7 @@ class Worker extends EventEmitter {
       .then(_this.fetchArticles.bind(_this))
       .then(_this.saveArticles.bind(_this))
       .then(_this.findArticlesChanged.bind(_this))
-      .then(_this.sendMail.bind(_this))
+      .then(_this.emailIt.bind(_this))
       .catch(err => _this.emit('error', err));
   }
 
@@ -97,6 +97,7 @@ class Worker extends EventEmitter {
   }
 
   fetchMenu() {
+    let _this = this;
     _this.log('fetchMenu...');
     const reduceMenus = (ls, elem) => {
       if(Array.isArray(elem)) {
@@ -115,7 +116,7 @@ class Worker extends EventEmitter {
       .then(res => res.text())
       .then(res => MENU_REGEX.exec(res)[2].slice(0, -1))
       .then(JSON.parse)
-      .then(menu => menu.reduce(reduceMenus, []));
+      .then(menu => menu.reduce(reduceMenus, []).slice(0, 1));
   }
 
   fetchArticles(lines) {
@@ -190,12 +191,18 @@ class Worker extends EventEmitter {
   findArticlesChanged() {
     let _this = this;
     _this.log('findArticlesChanged...');
-    return _this.db.collection('articles')
-      .find({ $or: [{ new: true }, { discount: true }, { increse: true }] })
-      .toArrayAsync();
+    return new Promise((resolve, reject) => {
+      _this.db.collection('articles')
+        .find({ $or: [{ new: true }, { discount: true }, { increse: true }] })
+        .toArray((err, rs) => {
+          _this.log(err);
+          _this.log(rs);
+          resolve(rs);
+        });
+    });
   }
 
-  sendMail(results) {
+  emailIt(results) {
     let _this = this;
     _this.log('sendMail...');
     return _this.buildMail(results)
@@ -204,6 +211,7 @@ class Worker extends EventEmitter {
 
   buildMail(results) {
     let _this = this;
+    _this.log('buildMail...');
     return fs.readFileAsync(path.join(__dirname, '../template/mail.html'), 'utf-8')
       .then(Handlebars.compile)
       .then(_this.generateHTML({ results }));
