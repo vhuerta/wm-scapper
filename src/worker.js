@@ -116,7 +116,7 @@ class Worker extends EventEmitter {
       .then(res => res.text())
       .then(res => MENU_REGEX.exec(res)[2].slice(0, -1))
       .then(JSON.parse)
-      .then(menu => menu.reduce(reduceMenus, []).slice(0, 1));
+      .then(menu => menu.reduce(reduceMenus, []));
   }
 
   fetchArticles(lines) {
@@ -195,8 +195,6 @@ class Worker extends EventEmitter {
       _this.db.collection('articles')
         .find({ $or: [{ new: true }, { discount: true }, { increse: true }] })
         .toArray((err, rs) => {
-          _this.log(err);
-          _this.log(rs);
           resolve(rs);
         });
     });
