@@ -68,6 +68,8 @@ class Worker extends EventEmitter {
     _this.sendMail = R.curry((mailer, options, html) => mailer.sendMailAsync(Object.assign({ html }, options)));
     _this.sendMail = _this.sendMail(_this.mailer);
     _this.sendMail = _this.sendMail(_this.mailOptions);
+    _this.log('mailOptions...');
+    _this.log(_this.mailOptions);
   }
 
   work() {
@@ -83,7 +85,7 @@ class Worker extends EventEmitter {
 
   clean() {
     let _this = this;
-
+    _this.log('clean...');
     return _this.db.collection('articles')
       .updateMany({}, {
         $set: {
@@ -95,7 +97,7 @@ class Worker extends EventEmitter {
   }
 
   fetchMenu() {
-
+    _this.log('fetchMenu...');
     const reduceMenus = (ls, elem) => {
       if(Array.isArray(elem)) {
         elem.reduce(reduceMenus, ls);
@@ -118,6 +120,7 @@ class Worker extends EventEmitter {
 
   fetchArticles(lines) {
     let _this = this;
+    _this.log('fetchArticles...');
     return Promise.all(lines.map(_this.fetchLine.bind(_this)))
       .then(res => res.reduce((r, a) => r.concat(a), []));
   }
@@ -137,6 +140,7 @@ class Worker extends EventEmitter {
 
   saveArticles(articles) {
     let _this = this;
+    _this.log('saveArticles...');
     return Promise.all(articles.map(_this.saveArticle.bind(_this)));
   }
 
@@ -185,9 +189,17 @@ class Worker extends EventEmitter {
 
   findArticlesChanged() {
     let _this = this;
+    _this.log('findArticlesChanged...');
     return _this.db.collection('articles')
       .find({ $or: [{ new: true }, { discount: true }, { increse: true }] })
       .toArrayAsync();
+  }
+
+  sendMail(results) {
+    let _this = this;
+    _this.log('sendMail...');
+    return _this.buildMail(results)
+      .then(_this.sendMail);
   }
 
   buildMail(results) {
@@ -195,12 +207,6 @@ class Worker extends EventEmitter {
     return fs.readFileAsync(path.join(__dirname, '../template/mail.html'), 'utf-8')
       .then(Handlebars.compile)
       .then(_this.generateHTML({ results }));
-  }
-
-  sendMail(results) {
-    let _this = this;
-    return _this.buildMail(results)
-      .then(_this.sendMail);
   }
 
 }
