@@ -1,0 +1,22 @@
+<table>
+  <thead>
+    <tr>
+      <th>Producto</th>
+      <th>Precio Anterior</th>
+      <th>% de cambio</th>
+      <th>Precio Actual</th>
+      <th>Url</th>
+    </tr>
+  </thead>
+  <tbody>
+    {{#each results}}
+    <tr>
+      <td>{{description}}</td>
+      <td>{{beforePrice}}</td>
+      <td bgcolor="{{color discount}}">{{percentage}}</td>
+      <td>{{price}}</td>
+      <td>{{url}}</td>
+    </tr>
+    {{/each}}
+  </tbody>
+</table>

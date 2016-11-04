@@ -7,30 +7,51 @@
  */
 
 import throng from 'throng';
+import Worker from './worker';
 
-const work = () => {
-  console.log('Working...');
-};
+const CONCURRENCY = 3;
 
 /**
  * Master function
  */
 const master = () => {
-  console.log('Master function, concurrency:', 2);
+  console.log('Master function, concurrency:', CONCURRENCY);
 };
+
+const log = console.log;
 
 /**
  * Start every worker
  * @param  {Number} id Worker id
  */
 const start = (id) => {
-  work();
-  setInterval(work, 1000 * 60 * 5);
+
+  const instance = Worker({
+    mongoUri: process.env.MONGODB_URI,
+    email : process.env.GMAIL_EMAIL,
+    password: process.env.GMAIL_PASSWORD,
+    receivers: process.env.RECEIVERS,
+    log: log
+  });
+
+  instance.on('ready', () => {
+    log(`Worker ${id} ready!`);
+    setTimeout(() => {
+      instance.work();
+      setInterval(instance.work, 1000 * 60 * 5); // work every 5 minutes
+    }, (id - 1) * 1000 * 60 * 2); // start on 0, 2, 4 mins
+  });
+
+  instance.on('error', err => {
+    log(`Worker ${id} error!`);
+    log(err);
+    process.exit();
+  });
 };
 
 // Run Workers
 throng({
-  workers: 2,
+  workers: CONCURRENCY,
   grace: 1,
   master: master,
   start: start

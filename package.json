@@ -4,10 +4,12 @@
   "description": "WM Scrapper",
   "main": "src/index.js",
   "scripts": {
+    "heroku-postbuild": "npm run clean && npm run build",
     "test": "echo \"Error: no test specified\" && exit 1",
     "clean": "rm -rf build && mkdir build",
     "build": "./node_modules/.bin/babel src -d build",
-    "start": "npm run clean && npm run build && node ./build/index.js"
+    "start-dev": "npm run clean && npm run build && node ./build/index.js",
+    "start": "node ./build/index.js"
   },
   "repository": {
     "type": "git",
@@ -23,6 +25,8 @@
     "babel-cli": "^6.18.0",
     "babel-preset-node6": "^11.0.0",
     "babel-register": "^6.18.0",
+    "bluebird": "^3.4.6",
+    "handlebars": "^4.0.5",
     "mongodb": "^2.2.11",
     "node-fetch": "^1.6.3",
     "nodemailer": "^2.6.4",
