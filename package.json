@@ -3,6 +3,9 @@
   "version": "1.0.0",
   "description": "WM Scrapper",
   "main": "src/index.js",
+  "engines": {
+    "node": ">=6"
+  },
   "scripts": {
     "heroku-postbuild": "npm run clean && npm run build",
     "test": "echo \"Error: no test specified\" && exit 1",
