@@ -9,7 +9,7 @@
 import throng from 'throng';
 import Worker from './worker';
 
-const CONCURRENCY = 3;
+const CONCURRENCY = 1;
 
 /**
  * Master function
