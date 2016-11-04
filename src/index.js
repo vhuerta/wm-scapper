@@ -37,7 +37,7 @@ const start = (id) => {
   instance.on('ready', () => {
     log(`Worker ${id} ready!`);
     setTimeout(() => {
-      instance.work();
+      instance.work.bind(instance)();
       setInterval(instance.work, 1000 * 60 * 5); // work every 5 minutes
     }, (id - 1) * 1000 * 60 * 2); // start on 0, 2, 4 mins
   });
