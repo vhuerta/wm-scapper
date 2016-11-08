@@ -33,6 +33,7 @@
     "mongodb": "^2.2.11",
     "node-fetch": "^1.6.3",
     "nodemailer": "^2.6.4",
+    "nodemailer-mailgun-transport": "^1.2.2",
     "ramda": "^0.22.1",
     "throng": "^4.0.0"
   }
