@@ -6,6 +6,8 @@
  * @author Victor Huerta <vhuertahnz@gmail.com>
  */
 
+import config from './config';
+
 import EventEmitter from 'events';
 import fs from 'fs';
 import path from 'path';
