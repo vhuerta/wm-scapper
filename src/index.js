@@ -28,8 +28,7 @@ const start = (id) => {
 
   const instance = Worker({
     mongoUri: process.env.MONGODB_URI,
-    email : process.env.GMAIL_EMAIL,
-    password: process.env.GMAIL_PASSWORD,
+    email : process.env.MAILGUN_SMTP_LOGIN,
     receivers: process.env.RECEIVERS,
     log: log
   });

@@ -15,6 +15,7 @@ import R from 'ramda';
 import Bluebird from 'bluebird';
 import Handlebars from 'handlebars';
 import Nodemailer from 'nodemailer';
+import MG from 'nodemailer-mailgun-transport';
 import { MongoClient, Collection, Cursor } from 'mongodb';
 
 /**
@@ -36,11 +37,10 @@ const MENU_REGEX = /(var\smenu\s.?\s)(\[?.+\;?)/g;
 
 class Worker extends EventEmitter {
 
-  constructor({ mongoUri, email, password, receivers, log = () => {} }) {
+  constructor({ mongoUri, email, receivers, log = () => {} }) {
     super();
     let _this = this;
     _this.email = email;
-    _this.password = password;
     _this.receivers = receivers;
     _this.mongoUri = mongoUri;
     _this.log = log;
@@ -58,7 +58,9 @@ class Worker extends EventEmitter {
     _this.generateHTML = R.curry((results, template) => template(results));
 
     // Create mailing util methods
-    _this.mailer = Nodemailer.createTransport(`smtps://${_this.email}:${_this.password}@smtp.gmail.com`);
+    //_this.mailer = Nodemailer.createTransport(`smtps://${_this.email}:${_this.password}@smtp.gmail.com`);
+    _this.mailer = Nodemailer.createTransport(MG(config.mailgun));
+
     Bluebird.promisifyAll(_this.mailer);
     _this.mailOptions = {
       from: `SCRAPER 👥 <${_this.email}>`, // sender address
